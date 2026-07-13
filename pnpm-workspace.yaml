@@ -1,0 +1,10 @@
+packages:
+  - apps/*
+  - packages/*
+
+storeDir: .pnpm-store
+cacheDir: .pnpm-cache
+stateDir: .pnpm-state
+
+allowBuilds:
+  sharp: true

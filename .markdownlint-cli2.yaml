@@ -1,0 +1,22 @@
+config:
+  default: true
+  MD012: false
+  MD013: false
+  MD024:
+    siblings_only: true
+  MD036: false
+
+globs:
+  - "**/*.md"
+
+gitignore: true
+
+ignores:
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/coverage/**"
+  - "**/test-results/**"
+  - "**/playwright-report/**"
+  - "**/.pnpm-store/**"
+  - "**/.pnpm-cache/**"
+  - "**/.pnpm-state/**"
