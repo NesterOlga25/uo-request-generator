@@ -1,9 +1,4 @@
 (() => {
-  const limits = {
-    description: { min: 10, max: 2000 },
-    location: { max: 120 },
-  };
-
   const form = document.querySelector("#request-form");
   const description = document.querySelector("#description");
   const location = document.querySelector("#location");
@@ -15,7 +10,7 @@
   const resultPlaceholder = document.querySelector("#result-placeholder");
 
   function updateCharacterCount() {
-    descriptionCount.textContent = `${description.value.length} / ${limits.description.max}`;
+    descriptionCount.textContent = `${description.value.length} / ${description.maxLength}`;
   }
 
   function readForm() {
@@ -28,16 +23,16 @@
   }
 
   function validateForm(input) {
-    if (input.description.length < limits.description.min) {
-      return `Описание должно содержать не менее ${limits.description.min} символов`;
+    if (input.description.length < description.minLength) {
+      return `Описание должно содержать не менее ${description.minLength} символов`;
     }
 
-    if (input.description.length > limits.description.max) {
-      return `Описание должно содержать не более ${limits.description.max} символов`;
+    if (input.description.length > description.maxLength) {
+      return `Описание должно содержать не более ${description.maxLength} символов`;
     }
 
-    if (input.location !== undefined && input.location.length > limits.location.max) {
-      return `Место должно содержать не более ${limits.location.max} символов`;
+    if (input.location !== undefined && input.location.length > location.maxLength) {
+      return `Место должно содержать не более ${location.maxLength} символов`;
     }
 
     return undefined;

@@ -1,9 +1,9 @@
-import { generateRequestLimits } from "@uo-request-generator/core";
+import { generateRequestLimits, type LlmGateway } from "@uo-request-generator/core";
 import { DisabledLlmGateway } from "@uo-request-generator/llm";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createApp } from "../src/app";
 
-type ApiErrorCode = "generation_provider_unavailable" | "validation_error";
+type ApiErrorCode = "generation_provider_unavailable" | "internal_error" | "validation_error";
 
 const apps: ReturnType<typeof createApp>[] = [];
 
@@ -40,7 +40,7 @@ function expectApiError(payload: unknown, expected: { code: ApiErrorCode; messag
 
 async function injectGenerate(
   payload: Record<string, unknown>,
-  gateway = new DisabledLlmGateway(),
+  gateway: LlmGateway = new DisabledLlmGateway(),
 ) {
   const app = createApp({ llmGateway: gateway });
   apps.push(app);
@@ -151,5 +151,25 @@ describe("POST /api/generate", () => {
     expect(response.statusCode).toBe(503);
     expect(response.body).not.toContain(privateInput);
     expect(response.body).not.toContain("Generation provider is not configured");
+  });
+
+  it("does not report an unknown gateway error as provider unavailability", async () => {
+    const privateInput = "На площадке пахнет, личная деталь 8472";
+    const gatewayErrorMessage = "Unexpected gateway failure 9135";
+    const failingGateway: LlmGateway = {
+      async generateRequest() {
+        throw new Error(gatewayErrorMessage);
+      },
+    };
+
+    const response = await injectGenerate({ description: privateInput }, failingGateway);
+
+    expect(response.statusCode).toBe(500);
+    expectApiError(response.json(), {
+      code: "internal_error",
+      message: "Не удалось составить заявку",
+    });
+    expect(response.body).not.toContain(privateInput);
+    expect(response.body).not.toContain(gatewayErrorMessage);
   });
 });
