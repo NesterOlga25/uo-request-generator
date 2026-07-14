@@ -1,7 +1,10 @@
-.PHONY: dev build lint lint-md format format-check typecheck test check
+.PHONY: dev compose build lint lint-md format format-check typecheck test check
 
 dev:
 	pnpm dev
+
+compose:
+	docker compose up --build
 
 build:
 	pnpm build
